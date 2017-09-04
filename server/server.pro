@@ -18,7 +18,8 @@ HEADERS += \
     videosrc.h \
     videohandler.h \
     camera.h \
-    config.h
+    config.h \
+    protocol.h
 
 LIBS +=   -lopencv_core  -lopencv_highgui  -lopencv_objdetect -lopencv_imgproc -lopencv_ml -lopencv_video
 

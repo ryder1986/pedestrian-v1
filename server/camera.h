@@ -18,9 +18,15 @@
 #include <QThread>
 #include "config.h"
 #include "videosrc.h"
+#include "videohandler.h"
 using namespace cv;
 using namespace std;
-class CameraManager;
+//class CameraManager;
+/*
+    get mat from src  every 10 msec , give mat to video handler
+
+*/
+
 class Camera : public QObject
 {
     Q_OBJECT
@@ -90,12 +96,47 @@ public:
             delete cams[i];
         }
     }
+
+    void reload_camera()
+    {
+        foreach (Camera *c, cams) {
+            delete c;
+        }
+        int num;
+        cams.clear();
+        for(int i=0;i<p_cfg->data.camera_amount;i++){
+             Camera *c=new Camera(p_cfg->data.camera[i]);
+             cams.append(c);
+            //  if(i==0)
+          //    connect(c->p_src,SIGNAL(frame_update(Mat)),&c->render,SLOT(set_mat(Mat)));
+          //   if(i==0)
+          //   layout->addWidget(&c->render,i,i);
+        }
+        num=cams.size();
+    }
 public slots:
     void add_camera(QByteArray buf)
     {
         p_cfg->set_ba((buf));
         Camera *c=new Camera(p_cfg->data.camera[p_cfg->data.camera_amount-1]);
         cams.append(c);
+    }
+    void add_camera(QString ip)
+    {
+        //         Camera *c=new Camera(cfg.data.camera[i]);
+
+        camera_data_t ca;
+        ca.ip=ip;
+        ca.port=554;
+        p_cfg->data.camera.append(ca);
+        p_cfg->data.camera_amount++;
+        Camera *c=new Camera(p_cfg->data.camera[p_cfg->data.camera_amount-1]);
+        cams.append(c);
+        p_cfg->save();
+       //  if(i==0)
+     //    connect(c->p_src,SIGNAL(frame_update(Mat)),&c->render,SLOT(set_mat(Mat)));
+     //   if(i==0)
+    //    layout->addWidget(&c->render,1,cams.length()-1);
     }
     void del_camera(int index)
     {
@@ -107,6 +148,8 @@ public slots:
             cams.removeAt(index-1);
         }
     }
+
+
     void modify_camera(int index)
     {
         cams[index]->restart(p_cfg->data.camera[index-1]);
@@ -117,6 +160,25 @@ public slots:
         int len=b.length();
         memcpy(c,b.data(),len);
         return len;
+    }
+    QString get_config()
+    {
+        QByteArray b(p_cfg->get_ba());
+        int len=b.length();
+     //   memcpy(c,b.data(),len);
+       // return len;
+         QString str(b);
+         return str;
+    }
+    QByteArray get_config(int i)
+    {
+        QByteArray b(p_cfg->get_ba());
+
+         return b;
+    }
+    int get_size()
+    {
+        return cams.size();
     }
 
 private:

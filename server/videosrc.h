@@ -1,7 +1,16 @@
 #ifndef VIDEOSRC_H
 #define VIDEOSRC_H
-
-#include "videohandler.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/video/video.hpp>
+#include <opencv2/ml/ml.hpp>
+#include <opencv2/objdetect/objdetect.hpp>
+#include <QObject>
+#include "common.h"
+using namespace cv;
+using namespace std;
+//#include "videohandler.h"
 class VideoSrc:public QObject{
     Q_OBJECT
 public:
