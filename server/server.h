@@ -132,7 +132,14 @@ private:
     QUdpSocket *udp_skt; QTimer *timer;
     QHostAddress client_addr;
 };
+/*
+    server provide
+        tcpserver:handle clients session
+        clients:hold all ClientSession
+        systeminforeporter:recive udp request,and respond with ip ,netmask ,etc...
+        camera manager:holds configuration , runing camera,manage add,delete and other operation
 
+*/
 class Server : public QObject
 {
     Q_OBJECT

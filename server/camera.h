@@ -78,7 +78,7 @@ class CameraManager:public QObject{
     Q_OBJECT
 public:
     CameraManager(){
-         p_cfg=new Config("/root/repo-github/pedestrian/config.json");
+         p_cfg=new Config(":/config.json");
        //     p_cfg=new Config();
         for(int i=0;i<p_cfg->data.camera_amount;i++){
             Camera *c=new Camera(p_cfg->data.camera[i]);
