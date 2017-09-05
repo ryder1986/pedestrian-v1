@@ -38,8 +38,8 @@ public:
         p_video_src=new VideoSrc(data.ip);
         timer=new QTimer();
         connect(timer,SIGNAL(timeout()),this,SLOT(work()));
-        fetch_thread.start();
-   //     timer->start(30);
+     //   fetch_thread.start();
+        timer->start(30);
     }
     ~Camera(){
         delete timer;
@@ -51,9 +51,14 @@ public:
     }
     void fetch()
     {
-         IplImage *f=p_video_src->fetch_frame();
+        IplImage *f=p_video_src->fetch_frame();
     }
-
+#ifdef CLIENT
+    QWidget *get_render()
+    {
+        return video_handler.get_render();
+    }
+#endif
 signals:
 
 public slots:
@@ -76,20 +81,24 @@ private:
     int tick_work;
     QList <IplImage> frame_list;
     QMutex lock;
-    QThread fetch_thread;
+ //   QThread fetch_thread;
 };
 
 
 class CameraManager:public QObject{
     Q_OBJECT
 public:
-    CameraManager(){
-         p_cfg=new Config(":/config.json");
-       //     p_cfg=new Config();
-        for(int i=0;i<p_cfg->data.camera_amount;i++){
-            Camera *c=new Camera(p_cfg->data.camera[i]);
-            cams.append(c);
-        }
+//    CameraManager(){
+//        p_cfg=new Config("/root/repo-github/pedestrian-v1/server/config.json");
+//        //     p_cfg=new Config();
+//        for(int i=0;i<p_cfg->data.camera_amount;i++){
+//            Camera *c=new Camera(p_cfg->data.camera[i]);
+//            cams.append(c);
+//        }
+//    }
+    CameraManager(char * url){
+        p_cfg=new Config(url);
+        reload_camera();
     }
     ~CameraManager(){
         for(int i=0;i<p_cfg->data.camera_amount;i++){
@@ -105,15 +114,20 @@ public:
         int num;
         cams.clear();
         for(int i=0;i<p_cfg->data.camera_amount;i++){
-             Camera *c=new Camera(p_cfg->data.camera[i]);
-             cams.append(c);
+            Camera *c=new Camera(p_cfg->data.camera[i]);
+            cams.append(c);
             //  if(i==0)
-          //    connect(c->p_src,SIGNAL(frame_update(Mat)),&c->render,SLOT(set_mat(Mat)));
-          //   if(i==0)
-          //   layout->addWidget(&c->render,i,i);
+            //    connect(c->p_src,SIGNAL(frame_update(Mat)),&c->render,SLOT(set_mat(Mat)));
+            //   if(i==0)
+            //   layout->addWidget(&c->render,i,i);
         }
         num=cams.size();
     }
+    QList <Camera *>  &get_cam()
+    {
+        return cams;
+    }
+
 public slots:
     void add_camera(QByteArray buf)
     {
@@ -133,10 +147,10 @@ public slots:
         Camera *c=new Camera(p_cfg->data.camera[p_cfg->data.camera_amount-1]);
         cams.append(c);
         p_cfg->save();
-       //  if(i==0)
-     //    connect(c->p_src,SIGNAL(frame_update(Mat)),&c->render,SLOT(set_mat(Mat)));
-     //   if(i==0)
-    //    layout->addWidget(&c->render,1,cams.length()-1);
+        //  if(i==0)
+        //    connect(c->p_src,SIGNAL(frame_update(Mat)),&c->render,SLOT(set_mat(Mat)));
+        //   if(i==0)
+        //    layout->addWidget(&c->render,1,cams.length()-1);
     }
     void del_camera(int index)
     {
@@ -164,17 +178,14 @@ public slots:
     QString get_config()
     {
         QByteArray b(p_cfg->get_ba());
-        int len=b.length();
-     //   memcpy(c,b.data(),len);
-       // return len;
-         QString str(b);
-         return str;
+        QString str(b);
+        return str;
     }
     QByteArray get_config(int i)
     {
         QByteArray b(p_cfg->get_ba());
 
-         return b;
+        return b;
     }
     int get_size()
     {

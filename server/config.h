@@ -150,6 +150,7 @@ public:
     }
     int load_config_from_file()
     {
+
         QFile *f=new QFile(config_filename);
         bool ret = f->open(QIODevice::ReadOnly);
         if(!ret){
@@ -167,8 +168,9 @@ public:
     void save_config_to_file()
     {
         QFile *f=new QFile(config_filename);
-        bool ret = f->open(QIODevice::WriteOnly);
+        bool ret = f->open(QIODevice::ReadWrite);
         if(!ret){
+            prt(info,"fail to open %s",config_filename.data());
             delete f;
         }
         //   QByteArray json_data;

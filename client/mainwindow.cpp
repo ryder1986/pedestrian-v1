@@ -71,26 +71,13 @@ void MainWindow::on_pushButton_get_config_clicked()
 
 void MainWindow::on_pushButton_add_clicked()
 {
-
     QString ip=ui->lineEdit_add->text();
     cam_manager->add_camera(ip);
-    // QByteArray setting= cam_manager->cfg->get_ba();
-  //  QString cfg_str;
-
     QByteArray setting=cam_manager->get_config(1);
-
-
     int len=Protocol::encode_addcam_request(buf,setting.length());
     memcpy(buf+Protocol::HEAD_LENGTH,setting.data(),setting.length());
-
     QByteArray rst=client->call_server(buf,len);
     cam_manager->reconfig_camera(ui->gridLayout_2);
-    //    rst=rst.remove(0,Protocol::HEAD_LENGTH);
-
-    // YuvRender *r=new YuvRender();
-    //  connect(cam_manager->cams,SIGNAL())
-
-    ///   cam_manager->add_camera("/root/repo-github/pedestrian/test.264");
 }
 
 

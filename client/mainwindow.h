@@ -16,9 +16,9 @@
 class ClientCameraManager:public CameraManager{
 
 public:
-    ClientCameraManager()
+    ClientCameraManager() :CameraManager("/root/repo-github/pedestrian-v1/client/config.json")
     {
-       //     p_cfg=new Config(":/config.json");
+        //     p_cfg=new Config(":/config.json");
     }
     ~ClientCameraManager()
     {
@@ -27,47 +27,21 @@ public:
 
     void reconfig_camera(QGridLayout *g)
     {
+        QList <Camera *> &c=get_cam();
         reload_camera();
-//        foreach (Camera *c, cams) {
-//            delete c;
-//        }
-//        int num;
-//        cams.clear();
-//        for(int i=0;i<cfg->data.camera_amount;i++){
-//             Camera *c=new Camera(cfg->data.camera[i]);
-//             cams.append(c);
-//            //  if(i==0)
-//          //    connect(c->p_src,SIGNAL(frame_update(Mat)),&c->render,SLOT(set_mat(Mat)));
-//          //   if(i==0)
-//          //   layout->addWidget(&c->render,i,i);
-//        }
-//        num=cams.size();
+        int size=get_size();
+        for(int i=0;i<size;i++){
+            QWidget *render=(c[i])->get_render();
+            g->addWidget(render,i+1,i+1);
+        }
+
     }
     void save_config(QByteArray ba)
     {
 
     }
-//    QByteArray get_config()
-//    {
-//      //  cfg.get_ba();
-//      return get_config();
-//    }
-//    void add_camera(QString url)
-//    {
-
-//    }
-//    void del_camera(int index)
-//    {
-
-//    }
-//    int get_size()
-//    {
-//        return cams.size();
-//    }
 
 private:
-//    Config *p_cfg;
-//    QList <Camera *> cams;
 
 };
 
@@ -96,13 +70,6 @@ public:
         cam_manager=new ClientCameraManager();
         client=new Client();
         cam_manager->reconfig_camera(ui->gridLayout_2);
-        //    clt=new client();
-        //    //CameraManager *cam=new CameraManager();
-        //    render=new YuvRender();
-        //    clt->get_client_setting();
-        //    Config *cfg=new Config;
-        //    Camera *cam=new Camera(cfg->data.camera[0]);
-        //    connect(&cam->src,SIGNAL(frame_update(Mat)),render,SLOT(set_mat(Mat) ));
 #if 0
         QPushButton *b1=new QPushButton("1");
         QPushButton *b2=new QPushButton("2");
@@ -121,18 +88,6 @@ public:
 
 
 private slots:
-    //    void on_pushButton_2_clicked(){
-
-    //    }
-
-    //    void on_pushButton_4_clicked(){
-
-    //    }
-
-    //    void on_pushButton_clicked(){
-
-    //    }
-
     void test(int t)
     {
         qDebug()<<"get pic "<<t;

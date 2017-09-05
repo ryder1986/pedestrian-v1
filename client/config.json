@@ -1,9 +1,20 @@
 {
     "camera": [
         {
-            "ip": "rtsp://192.168.1.89:554/av0_1",
+            "ip": "/root/repo-github/pedestrian/test.264",
             "port": 554
         }
     ],
     "camera_total_number": 1
+}
+b/pedestrian/test.264",
+            "port": 554
+        }
+    ],
+    "camera_total_number": 2
+}
+        "port": 554
+        }
+    ],
+    "camera_total_number": 3
 }
