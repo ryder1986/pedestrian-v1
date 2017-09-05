@@ -65,12 +65,24 @@ public slots:
     void work()
     {
         //  p_video_src->work(video_handler);
+
+        tick++;
+        if(tick==200){
+           // prt(info,"restart video");
+           //   std::this_thread::sleep_for(chrono::milliseconds(1000));
+            delete p_video_src;
+         //       std::this_thread::sleep_for(chrono::milliseconds(1000));
+            p_video_src=new VideoSrc(data.ip);
+            tick=0;
+        }
         IplImage *f=p_video_src->fetch_frame();
         if(tick_work++%1==0){
+     //     if(tick+5%200>10){
             video_handler.set_frame(f);
+
             video_handler.work("test url");
+       //   }
         }
-        tick++;
     }
 private:
     camera_data_t data;//data that camera need

@@ -132,6 +132,7 @@ public:
         makeCurrent();
         //   QImage  img = QImage((const uchar*)(frame.data),frame.cols,frame.rows,frame.cols*frame.channels(),QImage::Format_Indexed8);
         //   QImage  img = QImage((const uchar*)(frame.data),frame.cols,frame.rows,frame.cols*frame.channels(),QImage::Format_RGB888);
+      //  char t=*frame.data;
 
         Mat rgb_frame=frame;
         // cvtColor(frame,rgb_frame,CV_YUV2BGR);
@@ -139,6 +140,7 @@ public:
                              rgb_frame.cols*rgb_frame.channels(),QImage::Format_RGB888);
         painter.drawImage(QRect(0,0,this->width(),this->height()),img);
         painter.endNativePainting();
+
 #endif
     }
     void paint_layout2(QPainter &painter){
@@ -246,21 +248,32 @@ public:
 signals:
 
 public slots:
-    void render_set_mat(Mat f)
+    int render_set_mat(Mat f)
     {
         int size=f.rows;
+  char tmp2=*f.data;
+ // prt(info,"tick %d",tickmat++);
+//        if(tickmat >590&&tickmat<610)
+//            return 1;
 
         if(size>0)
         {
-            prt(info,"render set frame ok");
+       //     prt(info,"render set frame ok");
             frame=f;
+     //       prt(info,"%d",sizeof(f.data));
+            char tmp1=*f.data;
+            char tmp=*frame.data;
         }else
         {
+
             prt(info,"render set frame fail");
             frame.resize(640*480*3);
             frame=Mat(640,480,CV_8UC3);
 
             memset(frame.data,tmp_tick++,640*480*3);
+            char tmp1=*f.data;
+            char tmp=*frame.data;
+
         }
         this->update();
     }
@@ -274,6 +287,7 @@ private:
     int video_height;
     int pressed_x,pressed_y,pressed;
     int tick;
+    int tickmat;
     Mat frame;
 
 
