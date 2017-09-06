@@ -38,8 +38,10 @@ public:
         p_video_src=new VideoSrc(data.ip);
         timer=new QTimer();
         connect(timer,SIGNAL(timeout()),this,SLOT(work()));
-     //   fetch_thread.start();
+        //   fetch_thread.start();
         timer->start(30);
+        connect(p_video_src,SIGNAL(video_disconnected()),this,SLOT(source_disconnected()));
+        connect(p_video_src,SIGNAL(video_disconnected()),this,SLOT(source_connected()));
     }
     ~Camera(){
         delete timer;
@@ -62,26 +64,43 @@ public:
 signals:
 
 public slots:
+    void source_connected()
+    {
+        timer->setInterval(30);
+    }
+    void source_disconnected()
+    {
+        prt(info,"disconnected");
+        timer->setInterval(1000);
+    }
+
     void work()
     {
+      //  prt(info,"work pic menually");
         //  p_video_src->work(video_handler);
 
         tick++;
         if(tick==200){
-           // prt(info,"restart video");
-           //   std::this_thread::sleep_for(chrono::milliseconds(1000));
+            // prt(info,"restart video");
+            //   std::this_thread::sleep_for(chrono::milliseconds(1000));
             delete p_video_src;
-         //       std::this_thread::sleep_for(chrono::milliseconds(1000));
+            //       std::this_thread::sleep_for(chrono::milliseconds(1000));
             p_video_src=new VideoSrc(data.ip);
             tick=0;
         }
-        IplImage *f=p_video_src->fetch_frame();
-        if(tick_work++%1==0){
-     //     if(tick+5%200>10){
+    //    IplImage *f=p_video_src->fetch_frame();
+        Mat *f=p_video_src->fetch_frame_mat();
+        if(f!=NULL&&tick_work++%1==0){
+            //     if(tick+5%200>10){
             video_handler.set_frame(f);
 
             video_handler.work("test url");
-       //   }
+            //   }
+        }else{
+      //      prt(info,"sleep start");
+       //     std::this_thread::sleep_for(chrono::milliseconds(2000));
+        //    prt(info,"sleep end");
+
         }
     }
 private:
@@ -93,21 +112,21 @@ private:
     int tick_work;
     QList <IplImage> frame_list;
     QMutex lock;
- //   QThread fetch_thread;
+    //   QThread fetch_thread;
 };
 
 
 class CameraManager:public QObject{
     Q_OBJECT
 public:
-//    CameraManager(){
-//        p_cfg=new Config("/root/repo-github/pedestrian-v1/server/config.json");
-//        //     p_cfg=new Config();
-//        for(int i=0;i<p_cfg->data.camera_amount;i++){
-//            Camera *c=new Camera(p_cfg->data.camera[i]);
-//            cams.append(c);
-//        }
-//    }
+    //    CameraManager(){
+    //        p_cfg=new Config("/root/repo-github/pedestrian-v1/server/config.json");
+    //        //     p_cfg=new Config();
+    //        for(int i=0;i<p_cfg->data.camera_amount;i++){
+    //            Camera *c=new Camera(p_cfg->data.camera[i]);
+    //            cams.append(c);
+    //        }
+    //    }
     CameraManager(char * url){
         p_cfg=new Config(url);
         reload_camera();
@@ -138,6 +157,10 @@ public:
     QList <Camera *>  &get_cam()
     {
         return cams;
+    }
+    void save_config(QByteArray buf)
+    {
+        p_cfg->set_ba((buf));
     }
 
 public slots:
@@ -199,6 +222,7 @@ public slots:
 
         return b;
     }
+
     int get_size()
     {
         return cams.size();

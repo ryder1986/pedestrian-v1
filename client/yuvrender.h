@@ -130,14 +130,23 @@ public:
 #else
         painter.beginNativePainting();
         makeCurrent();
-        //   QImage  img = QImage((const uchar*)(frame.data),frame.cols,frame.rows,frame.cols*frame.channels(),QImage::Format_Indexed8);
-        //   QImage  img = QImage((const uchar*)(frame.data),frame.cols,frame.rows,frame.cols*frame.channels(),QImage::Format_RGB888);
+        //   QImage  img = QImage((const uchar*)\
+        (frame.data),frame.cols,frame.rows,frame.cols*frame.channels(),\
+                QImage::Format_Indexed8);
+        //   QImage  img = QImage((const uchar*)\
+        (frame.data),frame.cols,frame.rows,frame.cols*frame.channels(),\
+                QImage::Format_RGB888);
       //  char t=*frame.data;
 
         Mat rgb_frame=frame;
         // cvtColor(frame,rgb_frame,CV_YUV2BGR);
-        QImage  img = QImage((const uchar*)(rgb_frame.data),rgb_frame.cols,rgb_frame.rows,
-                             rgb_frame.cols*rgb_frame.channels(),QImage::Format_RGB888);
+        Mat yuv_frame;
+     //     cvtColor(rgb_frame,yuv_frame,CV_RGB2GRAY);
+       cvtColor(rgb_frame,yuv_frame,CV_BGR2RGB);
+       QImage  img = QImage((const uchar*)(yuv_frame.data),
+                             yuv_frame.cols,yuv_frame.rows,
+                             yuv_frame.cols*yuv_frame.channels(),
+                             QImage::Format_RGB888);
         painter.drawImage(QRect(0,0,this->width(),this->height()),img);
         painter.endNativePainting();
 
@@ -248,10 +257,10 @@ public:
 signals:
 
 public slots:
-    int render_set_mat(Mat f)
+    int render_set_mat(Mat frame_mat)
     {
-        int size=f.rows;
-  char tmp2=*f.data;
+        int size=frame_mat.rows;
+ // char tmp2=*f.data;
  // prt(info,"tick %d",tickmat++);
 //        if(tickmat >590&&tickmat<610)
 //            return 1;
@@ -259,10 +268,10 @@ public slots:
         if(size>0)
         {
        //     prt(info,"render set frame ok");
-            frame=f;
+            frame=frame_mat;
      //       prt(info,"%d",sizeof(f.data));
-            char tmp1=*f.data;
-            char tmp=*frame.data;
+            //char tmp1=*f.data;
+            //char tmp=*frame.data;
         }else
         {
 
@@ -271,11 +280,12 @@ public slots:
             frame=Mat(640,480,CV_8UC3);
 
             memset(frame.data,tmp_tick++,640*480*3);
-            char tmp1=*f.data;
-            char tmp=*frame.data;
+        //    char tmp1=*f.data;
+         //   char tmp=*frame.data;
 
         }
         this->update();
+        prt(info,"update pic menually");
     }
 
 private:

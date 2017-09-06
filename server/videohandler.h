@@ -33,11 +33,21 @@ public:
     {
 
     }
-    void set_frame( IplImage * frame)
-    {
-        frame_ori=frame;
-    }
+//    void queue_frame( IplImage * frame)
+//    {
+//        frame_ori=frame;
 
+//    }
+
+
+//    void set_frame( IplImage * frame)
+//    {
+//        frame_ori=frame;
+//    }
+    void set_frame( Mat * frame)
+    {
+        frame_mat=frame;
+    }
     int work(char *url)
     {
         int min_win_width = 64;	// 48, 64, 96, 128, 160, 192, 224
@@ -62,8 +72,9 @@ public:
             //   frame_ori = cvQueryFrame(p_cap);
             //   frame.create(frame_ori->height,frame_ori->width,CV_8U);
             //   memcpy(frame.data,frame_ori->imageData,frame_ori->imageSize);
-            Mat frame(frame_ori);
-           // imshow(url,frame);
+           // Mat frame(frame_ori);
+            Mat frame(*frame_mat);
+             // imshow(url,frame);
         //   return 0;
 
             //  cout << "opened " << endl;
@@ -120,7 +131,7 @@ public:
                     }
 
                  //   rectangle(frame,rect,Scalar(0,255,0),2);
-                       imshow("result", frame);
+             //    imshow("result", frame);
                     //outputVideo << frame;
                     //   waitKey(1);
                     objs.clear();
@@ -141,6 +152,8 @@ public:
 private:
     Mat gray_frame;
     Mat pedestrians;
+    Mat *frame_mat;
+    QList <Mat> frame_list;
     int pedestrian_num = 0;
     int frame_num = 0;
 

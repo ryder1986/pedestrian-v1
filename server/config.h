@@ -6,6 +6,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QTextStream>
 #include "common.h"
 
 typedef struct camera_data{
@@ -168,7 +169,7 @@ public:
     void save_config_to_file()
     {
         QFile *f=new QFile(config_filename);
-        bool ret = f->open(QIODevice::ReadWrite);
+        bool ret = f->open(QIODevice::ReadWrite|QIODevice::Truncate);
         if(!ret){
             prt(info,"fail to open %s",config_filename.data());
             delete f;
@@ -176,7 +177,6 @@ public:
         //   QByteArray json_data;
         // set_data();
         // json_data=json_doc.toJson();
-
         f->write(encode_to_json());
         f->close();
     }

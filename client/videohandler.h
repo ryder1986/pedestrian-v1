@@ -23,8 +23,8 @@ public:
         delete p_render;
     }
 
-    void set_frame(Mat frm){
-        p_render->render_set_mat(frm);
+    void set_frame(Mat *frm){
+        p_render->render_set_mat(*frm);
     }
     void work(char *)
     {

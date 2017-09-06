@@ -36,10 +36,7 @@ public:
         }
 
     }
-    void save_config(QByteArray ba)
-    {
 
-    }
 
 private:
 
